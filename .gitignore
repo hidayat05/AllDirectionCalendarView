@@ -10,3 +10,5 @@
 
 .idea/instapk.xml
 instapk.log*
+app/libs/
+library/libs/
