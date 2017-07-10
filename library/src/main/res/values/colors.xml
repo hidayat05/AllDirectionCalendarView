@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="frame_color">#ff212121</color>
+    <color name="holiday_color">#00ff5555</color>
+    <color name="regularday_color">#00333333</color>
+    <color name="grey_mask">#88000000</color>
+
+    <color name="style_color_primary">#ff5edaff</color>
+    <color name="style_color_primary_dark">#ff2863ea</color>
+
+    <color name="fab_color_primary">#ff378aea</color>
+    <color name="fab_color_shade">#ff949fa2</color>
+    <color name="fab_color_accent">#ff0d0ea2</color>
+
+</resources>

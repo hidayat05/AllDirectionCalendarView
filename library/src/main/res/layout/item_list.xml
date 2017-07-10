@@ -1,0 +1,7 @@
+<maskipli.id.library.CalendarMonthView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/listview"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    app:dividercolor="@android:color/white"
+    app:dividerwidth="5px" />
