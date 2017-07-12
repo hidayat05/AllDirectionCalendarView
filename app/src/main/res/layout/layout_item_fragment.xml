@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_below="@id/title"
-        app:dividercolor="@color/frame_color"
-        app:dividerwidth="5px" />
+        app:dividercolor="@android:color/white"
+        app:dividerwidth="8px" />
 
 </RelativeLayout>

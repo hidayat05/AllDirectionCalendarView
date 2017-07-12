@@ -6,25 +6,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.Calendar;
 
+import static maskipli.id.simplebidirectionalcalendar.MainActivity.currentDate;
+import static maskipli.id.simplebidirectionalcalendar.MainActivity.setMonthData;
+
 
 public class HorizontalFragment extends Fragment {
 
-    public static int currentIndex = 0;
-
-    private static class ViewHolder {
-        ViewPager viewPager;
-    }
+    private int currentIndex = 0;
+    public static final String TAG = "HorizontalFragment";
 
     public static HorizontalFragment newInstance(int index) {
         HorizontalFragment fragment = new HorizontalFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt("index", index);
+        bundle.putInt("indexParent", index);
+        Log.v(TAG, "position Horizontal = " + index);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -41,30 +43,23 @@ public class HorizontalFragment extends Fragment {
     }
 
     public void updateView(ViewGroup rootView) {
-        int index = getArguments().getInt("index");
-        Calendar thisMonth = (Calendar) MainActivity.currentDate.clone();
-        thisMonth.add(Calendar.YEAR, index - 1);
-        ViewHolder holder = (ViewHolder) rootView.getTag();
-        ViewPager viewPager;
+        int indexParent = getArguments().getInt("indexParent");
+        Log.v(TAG, "position updateView = " + indexParent);
+        Calendar thisMonth = (Calendar) currentDate.clone();
+        thisMonth.add(Calendar.YEAR, indexParent - 1);
 
-        if (holder != null) {
-            viewPager = holder.viewPager;
-            viewPager.setAdapter(viewPager.getAdapter());
-        } else {
-            viewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
-            holder = new ViewHolder();
-            holder.viewPager = viewPager;
-            rootView.setTag(holder);
-            HorizontalPagerAdapter adapter = new HorizontalPagerAdapter(getChildFragmentManager());
-            viewPager.setAdapter(adapter);
-        }
+        Log.v(TAG, "date updateView = " + thisMonth.getTime());
+
+
+        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+        HorizontalPagerAdapter adapter = new HorizontalPagerAdapter(getChildFragmentManager(), indexParent);
+        viewPager.setAdapter(adapter);
         setPagerOnScroller(viewPager);
 
     }
 
     private void setPagerOnScroller(final ViewPager pager) {
         pager.setCurrentItem(1);
-        pager.setOffscreenPageLimit(1);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -74,12 +69,15 @@ public class HorizontalFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 currentIndex = position;
+                Log.v(TAG, "position onPageSelected = " + position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    MainActivity.currentDate.add(Calendar.MONTH, currentIndex - 1);
+                    Log.v(TAG, "position onPageScrollStateChanged = " + currentIndex);
+                    setMonthData(currentIndex);
+                    Log.v(TAG, "date onPageScrollStateChanged = " + currentDate);
                     pager.setCurrentItem(1, false);
                     for (int i = 0; i < 3; i++) {
                         ItemFragment fragment = (ItemFragment) pager.getAdapter().instantiateItem(pager, i);
@@ -95,13 +93,16 @@ public class HorizontalFragment extends Fragment {
 
     private static class HorizontalPagerAdapter extends FragmentPagerAdapter {
 
-        public HorizontalPagerAdapter(FragmentManager fm) {
+        private int indexParent;
+
+        public HorizontalPagerAdapter(FragmentManager fm, int indexParent) {
             super(fm);
+            this.indexParent = indexParent;
         }
 
         @Override
         public Fragment getItem(int position) {
-            ItemFragment fragment = ItemFragment.newInstance(position);
+            ItemFragment fragment = ItemFragment.newInstance(indexParent, position);
             return fragment;
         }
 
