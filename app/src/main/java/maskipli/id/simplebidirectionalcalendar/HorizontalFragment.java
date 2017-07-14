@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,10 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.Calendar;
-
-import static maskipli.id.simplebidirectionalcalendar.MainActivity.currentDate;
-import static maskipli.id.simplebidirectionalcalendar.MainActivity.setMonthData;
-
 
 public class HorizontalFragment extends Fragment {
 
@@ -37,28 +33,28 @@ public class HorizontalFragment extends Fragment {
         if (container == null) {
             return null;
         }
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.layout_horizontal_fragment, null);
+        View rootView = inflater.inflate(R.layout.layout_horizontal_fragment, null);
         updateView(rootView);
         return rootView;
     }
 
-    public void updateView(ViewGroup rootView) {
+    public void updateView(View rootView) {
         int indexParent = getArguments().getInt("indexParent");
-        Log.v(TAG, "position updateView = " + indexParent);
-        Calendar thisMonth = (Calendar) currentDate.clone();
+        Log.v(TAG, "position init = " + indexParent);
+        Calendar thisMonth = ((MainActivity) getActivity()).getCurrentCalendar();
         thisMonth.add(Calendar.YEAR, indexParent - 1);
 
-        Log.v(TAG, "date updateView = " + thisMonth.getTime());
+        Log.v(TAG, "date init = " + thisMonth.getTime());
 
-
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+        ViewPager viewPager = (ViewPager) rootView;
         HorizontalPagerAdapter adapter = new HorizontalPagerAdapter(getChildFragmentManager(), indexParent);
         viewPager.setAdapter(adapter);
-        setPagerOnScroller(viewPager);
+        viewPager.setOffscreenPageLimit(2);
+        setPagerOnScroller(viewPager, indexParent);
 
     }
 
-    private void setPagerOnScroller(final ViewPager pager) {
+    private void setPagerOnScroller(final ViewPager pager, final int indexParent) {
         pager.setCurrentItem(1);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -75,15 +71,16 @@ public class HorizontalFragment extends Fragment {
             @Override
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    Log.v(TAG, "position onPageScrollStateChanged = " + currentIndex);
-                    setMonthData(currentIndex);
-                    Log.v(TAG, "date onPageScrollStateChanged = " + currentDate);
+                    Log.v(TAG, "indexChild = " + currentIndex);
+                    Log.v(TAG, "indexParent = " + indexParent);
+                    ((MainActivity) getActivity()).setMonthData(currentIndex);
+                    Log.v(TAG, "date onPageScrollStateChanged = " + ((MainActivity) getActivity()).getCurrentCalendar());
                     pager.setCurrentItem(1, false);
                     for (int i = 0; i < 3; i++) {
-                        ItemFragment fragment = (ItemFragment) pager.getAdapter().instantiateItem(pager, i);
+                        CalendarItemFragment fragment = (CalendarItemFragment) pager.getAdapter().instantiateItem(pager, i);
                         ViewGroup rootView = (ViewGroup) fragment.getView();
                         if (rootView != null) {
-                            fragment.updateView(rootView);
+                            fragment.init(rootView);
                         }
                     }
                 }
@@ -91,7 +88,7 @@ public class HorizontalFragment extends Fragment {
         });
     }
 
-    private static class HorizontalPagerAdapter extends FragmentPagerAdapter {
+    private static class HorizontalPagerAdapter extends FragmentStatePagerAdapter {
 
         private int indexParent;
 
@@ -102,8 +99,8 @@ public class HorizontalFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            ItemFragment fragment = ItemFragment.newInstance(indexParent, position);
-            return fragment;
+            CalendarItemFragment calendarItemFragment = CalendarItemFragment.newInstance(position - 1, indexParent - 1);
+            return calendarItemFragment;
         }
 
         @Override

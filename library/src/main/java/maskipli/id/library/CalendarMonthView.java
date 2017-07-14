@@ -29,6 +29,7 @@ public class CalendarMonthView extends ListView {
         dividerWidth = Math.min((int)ta.getDimension(R.styleable.CalendarMonthView_dividerwidth, 1), maxDividerWidth);
 		framePaint.setColor(ta.getColor(R.styleable.CalendarMonthView_dividercolor, 0xff333333));
 		framePaint.setStrokeWidth(dividerWidth);
+        ta.recycle();
 	}
 
     public int getDividerWidth() {

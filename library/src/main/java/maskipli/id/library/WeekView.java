@@ -6,6 +6,7 @@ package maskipli.id.library;
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -85,5 +86,15 @@ public class WeekView extends ViewGroup {
                 left += child.getMeasuredWidth() + dividerWidth;
             }
         }
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return true;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return true;
     }
 }

@@ -16,6 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".HorizontalPagerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.HorizontalPagerActivity" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

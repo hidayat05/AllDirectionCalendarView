@@ -3,7 +3,7 @@ package maskipli.id.simplebidirectionalcalendar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,26 +17,24 @@ import maskipli.id.library.VerticalViewPager;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String TAG = "Jancuk";
+    public static String TAG = MainActivity.class.getSimpleName();
 
-    public static Calendar currentDate;
+    private Calendar currentDate;
     private int currentIndex = 0;
-
-    public MainActivity() {
-        currentDate = Calendar.getInstance();
-        currentDate.set(Calendar.DATE, 1);
-        Log.v(TAG, "date = " + currentDate.getTime());
-    }
-
+    private VerticalViewPager verticalPager;
+    private HorizontalFragment horizontalFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_main);
 
+        createCalendar();
+
         VerticalPagerAdapter pageAdapter = new VerticalPagerAdapter(getSupportFragmentManager());
-        final VerticalViewPager verticalPager = (VerticalViewPager) findViewById(R.id.vertical_pager);
+        verticalPager = (VerticalViewPager) findViewById(R.id.vertical_pager);
         verticalPager.setAdapter(pageAdapter);
+        verticalPager.setOffscreenPageLimit(2);
         verticalPager.setCurrentItem(1); //the index for current month is 1
         verticalPager.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -51,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 currentIndex = position;
                 Log.v(TAG, "position = " + position);
-
             }
 
             @Override
@@ -64,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.v(TAG, "position onPageScrollStateChanged = " + currentIndex);
                     setYearData(currentIndex);
                     Log.v(TAG, "date onPageScrollStateChanged MainActivity = " + currentDate);
-                    verticalPager.setCurrentItem(1, false);//this does the trick
+                    verticalPager.setCurrentItem(1, false);//reset calendar index to always 1
                     for (int i = 0; i < 3; i++) {
-                        HorizontalFragment fragment = (HorizontalFragment) verticalPager.getAdapter().instantiateItem(verticalPager, i);
-                        ViewGroup rootView = (ViewGroup) fragment.getView();
+                        horizontalFragment = (HorizontalFragment) verticalPager.getAdapter().instantiateItem(verticalPager, i);
+                        ViewGroup rootView = (ViewGroup) horizontalFragment.getView();
                         if (rootView != null) {
-                            fragment.updateView(rootView);
+                            horizontalFragment.updateView(rootView);
                         }
                     }
                 }
@@ -78,8 +75,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void createCalendar() {
+        currentDate = Calendar.getInstance();
+        currentDate.set(Calendar.DATE, 1);
+        Log.v(TAG, "date = " + currentDate.getTime());
+    }
 
-    public class VerticalPagerAdapter extends FragmentPagerAdapter {
+    public class VerticalPagerAdapter extends FragmentStatePagerAdapter {
 
         public VerticalPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -87,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            HorizontalFragment fragment = HorizontalFragment.newInstance(position);
-            return fragment;
+            return HorizontalFragment.newInstance(position);
         }
 
         @Override
@@ -97,17 +98,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void setCurrentDate(Calendar currentDate) {
-        MainActivity.currentDate = currentDate;
+    public Calendar getCurrentCalendar() {
+        return currentDate;
     }
 
-
-    public static void setYearData(int parent) {
+    public void setYearData(int parent) {
         currentDate.add(Calendar.YEAR, parent - 1);
     }
 
-    public static void setMonthData(int childIndex) {
-        currentDate.add(Calendar.MONTH, childIndex - 1 );
+    public void setMonthData(int childIndex) {
+        currentDate.add(Calendar.MONTH, childIndex - 1);
     }
 
 }
