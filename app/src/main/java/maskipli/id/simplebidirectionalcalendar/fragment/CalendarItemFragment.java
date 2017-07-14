@@ -1,4 +1,4 @@
-package maskipli.id.simplebidirectionalcalendar;
+package maskipli.id.simplebidirectionalcalendar.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import maskipli.id.library.CalendarMonthView;
 import maskipli.id.library.WeekListAdapter;
+import maskipli.id.simplebidirectionalcalendar.R;
 
 /**
  * @author nurhidayat
