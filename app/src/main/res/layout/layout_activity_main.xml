@@ -4,7 +4,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="maskipli.id.simplebidirectionalcalendar.MainActivity">
+    tools:context="maskipli.id.simplebidirectionalcalendar.activity.MainActivity">
 
     <maskipli.id.library.VerticalViewPager
         android:id="@+id/vertical_pager"
