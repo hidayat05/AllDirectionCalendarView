@@ -14,6 +14,7 @@ import java.util.Calendar;
 import maskipli.id.library.CalendarMonthView;
 import maskipli.id.library.WeekListAdapter;
 import maskipli.id.simplebidirectionalcalendar.R;
+import maskipli.id.simplebidirectionalcalendar.global.Year;
 
 /**
  * @author nurhidayat
@@ -57,14 +58,13 @@ public class CalendarItemFragment extends Fragment {
         mTitleView = (TextView) rootView.findViewById(R.id.title);
         mCalendarMonthView = (CalendarMonthView) rootView.findViewById(R.id.listview);
 
-        Bundle data = getArguments();
+        Bundle bundle = getArguments();
         mCalendar = Calendar.getInstance();
-        mCalendar.set(Calendar.MONTH, data.getInt(BUNDLE_MONTH));
-        mCalendar.set(Calendar.YEAR, data.getInt(BUNDLE_YEAR));
+        mCalendar.set(Calendar.MONTH, bundle.getInt(BUNDLE_MONTH));
+        mCalendar.set(Calendar.YEAR, bundle.getInt(BUNDLE_YEAR) + Year.MIN);
 
         WeekListAdapter adapter = new WeekListAdapter(getContext(), mCalendar);
         mCalendarMonthView.setAdapter(adapter);
-
         mTitleView.setPadding(0, 0, 0, 10);
         mTitleView.setText(getFormattedTitle());
     }
@@ -73,10 +73,5 @@ public class CalendarItemFragment extends Fragment {
         return String.format("%1$tB, %1$tY", mCalendar);
     }
 
-    //TODO update data kalo indexParent bukan 1 (update year = indexParent - 1 ) + (update Month = recentmonth dari (child index 1))
-    //TODO update data after child di swipe .. udate parent id 0 sama 2 (child 1)
-
-    // ketika child di swipe dari index 1 makan parent untuk index 0 dan 2 juga di update
-    // update parent 0 dan 2  index child 1 ketika di swipe kanan dan kiri
 
 }

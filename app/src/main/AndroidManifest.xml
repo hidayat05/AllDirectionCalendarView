@@ -21,11 +21,6 @@
                 <action android:name="android.intent.action.HorizontalPagerActivity" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CalendarActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.HorizontalPagerActivity2" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

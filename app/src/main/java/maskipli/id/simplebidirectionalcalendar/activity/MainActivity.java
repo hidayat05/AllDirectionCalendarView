@@ -6,15 +6,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import maskipli.id.library.VerticalViewPager;
 import maskipli.id.simplebidirectionalcalendar.R;
 import maskipli.id.simplebidirectionalcalendar.fragment.CalendarHorizontalFragment;
 import maskipli.id.simplebidirectionalcalendar.global.Year;
+import maskipli.id.simplebidirectionalcalendar.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static int globalMonth; // TODO harus diganti dari swipe kiri kanan
+    private static final String TAG = "MainActivity";
+    public static int globalMonth;
     public static int globalYear;
 
     private VerticalViewPager verticalPager;
@@ -24,14 +27,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_main);
 
-        VerticalPagerAdapter verticalPagerAdapter = new VerticalPagerAdapter(getSupportFragmentManager());
+        // for set Year and Month
+        globalYear = 1973;
+        globalMonth = 1;
+
+        final VerticalPagerAdapter verticalPagerAdapter = new VerticalPagerAdapter(getSupportFragmentManager());
         verticalPager = (VerticalViewPager) findViewById(R.id.vertical_pager);
         verticalPager.setAdapter(verticalPagerAdapter);
 
-        globalYear = 2017;
-        globalMonth = 7;
-
-        verticalPager.setCurrentItem(verticalPagerAdapter.getPosition(globalYear));
+        verticalPager.setCurrentItem(verticalPagerAdapter.getYearToPosition(globalYear));
         verticalPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -40,7 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                globalYear = Year.MIN + position;//TODO
+                Log.e(TAG, "" + CalendarHorizontalFragment.getSwipeViewPager());
+                if (!CalendarHorizontalFragment.getSwipeViewPager()) {
+                    setGlobalYear(Utils.positionToYear(position));
+                } else {
+                    CalendarHorizontalFragment.setSwipeViewPager(false);
+                }
             }
 
             @Override
@@ -58,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return CalendarHorizontalFragment.newInstance(globalMonth, globalYear);
+            return CalendarHorizontalFragment.newInstance();
         }
 
         @Override
@@ -66,9 +75,37 @@ public class MainActivity extends AppCompatActivity {
             return Year.MAX - Year.MIN;
         }
 
-        public int getPosition(int year) {
-            return year - Year.MIN - 1;
+        public int getYearToPosition(int year) {
+            return Utils.yearToPosition(year);
         }
     }
 
+
+    /**
+     * global variable
+     * @return
+     */
+
+    public static int getGlobalMonth() {
+        return globalMonth;
+    }
+
+    public static void setGlobalMonth(int globalMonth) {
+        MainActivity.globalMonth = globalMonth;
+    }
+
+    public static int getGlobalYear() {
+        return globalYear;
+    }
+
+    public static void setGlobalYear(int globalYear) {
+        MainActivity.globalYear = globalYear;
+    }
 }
+
+/**
+ * TODO harus diganti dari swipe kiri kanan
+ * TODO kalau di swipe kanan kiri melebihi tahun .. kasih listener
+ * TODO index parent di update dengan cara pembagian position di child view pager
+ * TODO bulan di update dengan sisa hasil bagi pembagian (positi bulan / selisih tahun )
+ */

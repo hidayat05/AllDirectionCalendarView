@@ -6,6 +6,7 @@ package maskipli.id.simplebidirectionalcalendar.global;
 
 public class Year {
     public static int MIN = 1970;
-    public static int MAX = 3000;
+    public static int MIN_INDEX_YEAR = 1969;
+    public static int MAX = 1974;
 
 }
